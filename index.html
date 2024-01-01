@@ -1,157 +1,162 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Unity WebGL Player | 鄉民政治學 總統風雲錄</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico" />
-    <link rel="stylesheet" href="TemplateData/style.css" />
-  </head>
-  <body>
-    <div id="unity-container" class="unity-desktop" style="width: 90%; height: 100%">
-      <canvas id="unity-canvas" width="90%" height="50%"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-warning">
-        <div class="phone-box">
-          <div class="phone"></div>
-          <div class="message">Please rotate your device!</div>
-        </div>
-      </div>
-      <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">鄉民政治學 總統風雲錄</div>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Unity WebGL Player | 鄉民政治學 總統風雲錄</title>
+  <link rel="shortcut icon" href="TemplateData/favicon.ico">
+  <link rel="stylesheet" href="TemplateData/style.css">
+</head>
+
+<body>
+  <div id="unity-container" class="unity-desktop" style="width: 90%; height: 100%">
+    <canvas id="unity-canvas" width="90%" height="50%"></canvas>
+    <div id="unity-loading-bar">
+      <div id="unity-logo"></div>
+      <div id="unity-progress-bar-empty">
+        <div id="unity-progress-bar-full"></div>
       </div>
     </div>
-    <script>
-      var container = document.querySelector('#unity-container');
-      var canvas = document.querySelector('#unity-canvas');
-      var loadingBar = document.querySelector('#unity-loading-bar');
-      var progressBarFull = document.querySelector('#unity-progress-bar-full');
-      var fullscreenButton = document.querySelector('#unity-fullscreen-button');
-      var warningBanner = document.querySelector('#unity-warning');
+    <div id="unity-warning">
+      <div class="phone-box">
+        <div class="phone"></div>
+        <div class="message">Please rotate your device!</div>
+      </div>
+    </div>
+    <div id="unity-footer">
+      <div id="unity-webgl-logo"></div>
+      <div id="unity-fullscreen-button"></div>
+      <div id="unity-build-title">鄉民政治學 總統風雲錄</div>
+    </div>
+  </div>
+  <script>
+    var container = document.querySelector("#unity-container");
+    var canvas = document.querySelector("#unity-canvas");
+    var loadingBar = document.querySelector("#unity-loading-bar");
+    var progressBarFull = document.querySelector("#unity-progress-bar-full");
+    var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+    var warningBanner = document.querySelector("#unity-warning");
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function () {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
+    // Shows a temporary message banner/ribbon for a few seconds, or
+    // a permanent error message on top of the canvas if type=='error'.
+    // If type=='warning', a yellow highlight color is used.
+    // Modify or remove this function to customize the visually presented
+    // way that non-critical warnings and error messages are presented to the
+    // user.
+    function unityShowBanner(msg, type) {
+      function updateBannerVisibility() {
+        warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
       }
-
-      var buildUrl = 'Build';
-      var loaderUrl = buildUrl + '/1120909 webgl.loader.js';
-      var config = {
-        dataUrl: buildUrl + '/1120909 webgl.data.unityweb',
-        frameworkUrl: buildUrl + '/1120909 webgl.framework.js.unityweb',
-        codeUrl: buildUrl + '/1120909 webgl.wasm.unityweb',
-        streamingAssetsUrl: 'StreamingAssets',
-        companyName: 'BilingualGames',
-        productName: '鄉民政治學 總統風雲錄',
-        productVersion: '0.0.4',
-        showBanner: unityShowBanner,
-      };
-
-      // By default Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
-
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
-
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content =
-          'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        container.className = 'unity-mobile';
-        canvas.className = 'unity-mobile';
-
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
-
-        canvas.style.width = 'auto';
-        canvas.style.height = window.height + 'px';
-
-        if (window.innerHeight > window.innerWidth) {
-          warningBanner.style.display = 'block';
-          loadingBar.style.display = 'none';
-        }
-        if (window.innerHeight < window.innerWidth) {
-          warningBanner.style.display = 'none';
-          loadingBar.style.display = 'block';
-        }
-        window.addEventListener(
-          'orientationchange',
-          function () {
-            if (window.innerHeight > window.innerWidth) {
-              warningBanner.style.display = 'none';
-              loadingBar.style.display = 'block';
-            }
-            if (window.innerHeight < window.innerWidth) {
-              warningBanner.style.display = 'block';
-              loadingBar.style.display = 'none';
-            }
-            location.reload();
-
-            canvas.style.height = window.height + 'px';
-          },
-          false,
-        );
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = window.innerWidth + 'px';
-        canvas.style.height = 'auto';
+      var div = document.createElement('div');
+      div.innerHTML = msg;
+      warningBanner.appendChild(div);
+      if (type == 'error') div.style = 'background: red; padding: 10px;';
+      else {
+        if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+        setTimeout(function () {
+          warningBanner.removeChild(div);
+          updateBannerVisibility();
+        }, 5000);
       }
-      var script = document.createElement('script');
-      script.src = loaderUrl;
+      updateBannerVisibility();
+    }
+
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/0101webgl.loader.js";
+    var config = {
+      dataUrl: buildUrl + "/0101webgl.data.unityweb",
+      frameworkUrl: buildUrl + "/0101webgl.framework.js.unityweb",
+      codeUrl: buildUrl + "/0101webgl.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "BilingualGames",
+      productName: "鄉民政治學 總統風雲錄",
+      productVersion: "1.0.2",
+      showBanner: unityShowBanner,
+    };
+
+    // By default Unity keeps WebGL canvas render target size matched with
+    // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+    // Set this to false if you want to decouple this synchronization from
+    // happening inside the engine, and you would instead like to size up
+    // the canvas DOM size and WebGL render target sizes yourself.
+    // config.matchWebGLToCanvasSize = false;
+
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      // Mobile device style: fill the whole browser client area with the game canvas:
+
+      var meta = document.createElement('meta');
+      meta.name = 'viewport';
+      meta.content =
+        'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+      document.getElementsByTagName('head')[0].appendChild(meta);
+      container.className = 'unity-mobile';
+      canvas.className = 'unity-mobile';
+
+      // To lower canvas resolution on mobile devices to gain some
+      // performance, uncomment the following line:
+      // config.devicePixelRatio = 1;
+
+
+      canvas.style.width = 'auto';
+      canvas.style.height = window.height + 'px';
+
+      if (window.innerHeight > window.innerWidth) {
+        warningBanner.style.display = 'block';
+        loadingBar.style.display = 'none';
+      }
       if (window.innerHeight < window.innerWidth) {
         warningBanner.style.display = 'none';
         loadingBar.style.display = 'block';
-        onLoad();
       }
-      function onLoad() {
-        script.onload = () => {
-          createUnityInstance(canvas, config, (progress) => {
+      window.addEventListener(
+        'orientationchange',
+        function () {
+          if (window.innerHeight > window.innerWidth) {
+            warningBanner.style.display = 'none';
+            loadingBar.style.display = 'block';
+          }
+          if (window.innerHeight < window.innerWidth) {
+            warningBanner.style.display = 'block';
+            loadingBar.style.display = 'none';
+          }
+          location.reload();
+
+          canvas.style.height = window.height + 'px';
+        },
+        false,
+      );
+    } else {
+      // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = 'auto';
+    }
+    var script = document.createElement('script');
+    script.src = loaderUrl;
+    if (window.innerHeight < window.innerWidth) {
+      warningBanner.style.display = 'none';
+      loadingBar.style.display = 'block';
+      onLoad();
+    }
+
+    function onLoad() {
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
             progressBarFull.style.width = 100 * progress + '%';
           })
-            .then((unityInstance) => {
-              loadingBar.style.display = 'none';
-              fullscreenButton.onclick = () => {
-                unityInstance.SetFullscreen(1);
-              };
-            })
-            .catch((message) => {
-              alert(message);
-            });
-        };
-      }
-      document.body.appendChild(script);
-    </script>
-  </body>
+          .then((unityInstance) => {
+            loadingBar.style.display = 'none';
+            fullscreenButton.onclick = () => {
+              unityInstance.SetFullscreen(1);
+            };
+          })
+          .catch((message) => {
+            alert(message);
+          });
+      };
+    }
+    document.body.appendChild(script);
+  </script>
+</body>
+
 </html>
